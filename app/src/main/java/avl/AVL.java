@@ -41,32 +41,103 @@ public class AVL {
   /* insert w into the tree rooted at n, ignoring balance
    * pre: n is not null */
   private void bstInsert(Node n, String w) {
-    // TODO
+    if (n.word.equals(w)) {
+      return;
+    }
+    if (w.compareTo(n.word) < 0) {
+      if (n.left == null) {
+        n.left = new Node(w);
+        n.left.parent = n;
+        size++;
+      }
+      bstInsert(n.left, w);
+    } else {
+      if (n.right == null) {
+        n.right = new Node(w);
+        n.right.parent = n;
+        size++;
+      }
+      bstInsert(n.right, w);
+    }
   }
 
   /** insert w into the tree, maintaining AVL balance
   *  precondition: the tree is AVL balanced and any prior insertions have been
   *  performed by this method. */
   public void avlInsert(String w) {
-    // TODO
+    if (root.word == w) {
+      return;
+    } else {
+      avlInsert(root, w);
+    }
   }
 
   /* insert w into the tree, maintaining AVL balance
    *  precondition: the tree is AVL balanced and n is not null */
   private void avlInsert(Node n, String w) {
-    // TODO
+    if (n.word == w) {
+      return;
+    }
+    if (n.word.compareTo(w) < 0) {
+      if (n.left != null) {
+        avlInsert(n.left, w);
+      } else {
+        // attach new node with value w to n.left
+      }
+    } else {
+      if (n.left != null) {
+        avlInsert(n.right, w);
+      } else {
+        // attach new node with value w to n.right
+      }
+    }
+    rebalance(n);
   }
 
   /** do a left rotation: rotate on the edge from x to its right child.
   *  precondition: x has a non-null right child */
   public void leftRotate(Node x) {
-    // TODO
+    Node y = x.right;
+    if (y == null) {
+      return;
+    }
+    x.right = y.left;
+    if (y.left != null) {
+      y.left.parent = x;
+    }
+    y.parent = x.parent;
+    if (x.parent == null) {
+      this.root = y;
+    } else if (x == x.parent.left) {
+      x.parent.left = y;
+    } else {
+      x.parent.right = y;
+    }
+    y.left = x;
+    x.parent = y;
   }
 
   /** do a right rotation: rotate on the edge from x to its left child.
   *  precondition: y has a non-null left child */
   public void rightRotate(Node y) {
-    // TODO
+    Node x = y.left;
+    if (x == null) {
+      return;
+    }
+    y.left = x.right;
+    if (x.right != null) {
+      x.right.parent = y;
+    }
+    x.parent = y.parent;
+    if (y.parent == null) {
+      this.root = x;
+    } else if (y == y.parent.left) {
+      y.parent.left = x;
+    } else {
+      y.parent.right = x;
+    }
+    x.right = y;
+    y.parent = x;
   }
 
   /** rebalance a node N after a potentially AVL-violoting insertion.
