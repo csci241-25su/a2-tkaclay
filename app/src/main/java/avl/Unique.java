@@ -51,8 +51,12 @@ public class Unique {
 
     /** Return the number of unique lines availble to be read by sc */ 
     private static int avlUnique(Scanner sc) {
-      // TODO - implement this; its runtime should be O(n log n)
-      return 0; // placeholder, so code compiles
+      AVL avl = new AVL();
+      while (sc.hasNextLine()) {
+        String line = sc.nextLine();
+        avl.avlInsert(line);
+      }
+      return avl.getSize();
     }
 
 

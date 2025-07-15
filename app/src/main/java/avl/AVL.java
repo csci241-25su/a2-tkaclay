@@ -158,6 +158,7 @@ public class AVL {
   *  precondition: none of n's descendants violates the AVL property */
   public void rebalance(Node n) {
     while (n != null) {
+      n.height = getHeight(n);
       if (getBal(n) < -1) { // right is heavier
         if (getBal(n.right) > 0) {
           rightRotate(n.right);
@@ -177,8 +178,14 @@ public class AVL {
     if (n == null) {
       return 0;
     } else {
-      int leftHeight = getHeight(n.left);
-      int rightHeight = getHeight(n.right);
+      int leftHeight = -1;
+      if (n.left != null) {
+        leftHeight = n.left.height;
+      }
+      int rightHeight = -1;
+      if (n.right != null) {
+        rightHeight = n.right.height;
+      }
       return leftHeight - rightHeight;
     }
   }
@@ -187,8 +194,14 @@ public class AVL {
     if (n == null) {
       return -1;
     } else {
-      int leftHeight = getHeight(n.left);
-      int rightHeight = getHeight(n.right);
+      int leftHeight = -1;
+      if (n.left != null) {
+        leftHeight = n.left.height;
+      }
+      int rightHeight = -1;
+      if (n.right != null) {
+        rightHeight = n.right.height;
+      }
       if (leftHeight > rightHeight) {
         return leftHeight + 1;
       } else {
