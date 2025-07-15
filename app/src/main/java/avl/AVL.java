@@ -41,38 +41,173 @@ public class AVL {
   /* insert w into the tree rooted at n, ignoring balance
    * pre: n is not null */
   private void bstInsert(Node n, String w) {
-    // TODO
+    if (n.word.equals(w)) {
+      return;
+    }
+    if (w.compareTo(n.word) < 0) {
+      if (n.left == null) {
+        n.left = new Node(w);
+        n.left.parent = n;
+        size++;
+      }
+      bstInsert(n.left, w);
+    } else {
+      if (n.right == null) {
+        n.right = new Node(w);
+        n.right.parent = n;
+        size++;
+      }
+      bstInsert(n.right, w);
+    }
   }
 
   /** insert w into the tree, maintaining AVL balance
   *  precondition: the tree is AVL balanced and any prior insertions have been
   *  performed by this method. */
   public void avlInsert(String w) {
-    // TODO
+    if (root == null) {
+      root = new Node(w);
+      size = 1;
+      return;
+    }
+    avlInsert(root, w);
   }
 
   /* insert w into the tree, maintaining AVL balance
    *  precondition: the tree is AVL balanced and n is not null */
   private void avlInsert(Node n, String w) {
-    // TODO
+    if (n.word.equals(w)) {
+      return;
+    }
+    if (w.compareTo(n.word) < 0) {
+      if (n.left != null) {
+        avlInsert(n.left, w);
+      } else {
+        // attach new node with value w to n.left
+        n.left = new Node(w);
+        n.left.parent = n;
+        size++;
+        n.left.height = 0;
+      }
+    } else {
+      if (n.right != null) {
+        avlInsert(n.right, w);
+      } else {
+        // attach new node with value w to n.right
+        n.right = new Node(w);
+        n.right.parent = n;
+        size++;
+        n.right.height = 0;
+      }
+    }
+    n.height = getHeight(n);
+    rebalance(n);
   }
 
   /** do a left rotation: rotate on the edge from x to its right child.
   *  precondition: x has a non-null right child */
   public void leftRotate(Node x) {
-    // TODO
+    Node y = x.right;
+    if (y == null) {
+      return;
+    }
+    x.right = y.left;
+    if (y.left != null) {
+      y.left.parent = x;
+    }
+    y.parent = x.parent;
+    if (x.parent == null) {
+      this.root = y;
+    } else if (x == x.parent.left) {
+      x.parent.left = y;
+    } else {
+      x.parent.right = y;
+    }
+    y.left = x;
+    x.parent = y;
+    x.height = getHeight(x);
+    y.height = getHeight(y);
   }
 
   /** do a right rotation: rotate on the edge from x to its left child.
   *  precondition: y has a non-null left child */
   public void rightRotate(Node y) {
-    // TODO
+    Node x = y.left;
+    if (x == null) {
+      return;
+    }
+    y.left = x.right;
+    if (x.right != null) {
+      x.right.parent = y;
+    }
+    x.parent = y.parent;
+    if (y.parent == null) {
+      this.root = x;
+    } else if (y == y.parent.left) {
+      y.parent.left = x;
+    } else {
+      y.parent.right = x;
+    }
+    x.right = y;
+    y.parent = x;
+    x.height = getHeight(x);
+    y.height = getHeight(y);
   }
 
   /** rebalance a node N after a potentially AVL-violoting insertion.
   *  precondition: none of n's descendants violates the AVL property */
   public void rebalance(Node n) {
-    // TODO
+    while (n != null) {
+      n.height = getHeight(n);
+      if (getBal(n) < -1) { // right is heavier
+        if (getBal(n.right) > 0) {
+          rightRotate(n.right);
+        }
+        leftRotate(n);
+      } else if (getBal(n) > 1) { // left is heavier
+          if (getBal(n.left) < 0) {
+            leftRotate(n.left);
+          }
+          rightRotate(n);
+      }
+      n = n.parent;
+    }
+  }
+
+  private int getBal(Node n) {
+    if (n == null) {
+      return 0;
+    } else {
+      int leftHeight = -1;
+      if (n.left != null) {
+        leftHeight = n.left.height;
+      }
+      int rightHeight = -1;
+      if (n.right != null) {
+        rightHeight = n.right.height;
+      }
+      return leftHeight - rightHeight;
+    }
+  }
+
+  private int getHeight(Node n) {
+    if (n == null) {
+      return -1;
+    } else {
+      int leftHeight = -1;
+      if (n.left != null) {
+        leftHeight = n.left.height;
+      }
+      int rightHeight = -1;
+      if (n.right != null) {
+        rightHeight = n.right.height;
+      }
+      if (leftHeight > rightHeight) {
+        return leftHeight + 1;
+      } else {
+        return rightHeight + 1;
+      }
+    }
   }
 
   /** remove the word w from the tree */
